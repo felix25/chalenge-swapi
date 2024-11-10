@@ -1,0 +1,25 @@
+createStarWars:
+  handler: handler.main
+  description: |
+    Gets published document provided its type. Optionally you can specify its version, country, and language.
+  timeout: 10
+  memorySize: 192
+  events:
+    - http:
+        path: /star-wars/create
+        method: POST
+        integration: lambda
+        request:
+          headers:
+            Content-Type: "'application/json'"
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+            application/json: |
+              #set($inputRoot = $input.path('$'))
+              {
+                "page": "$inputRoot.page"
+              }
+        response:
+          headers:
+            Content-Type: "'application/json'"
+          template: $input.json('$')

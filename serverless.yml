@@ -1,0 +1,28 @@
+frameworkVersion: '4'
+configValidationMode: off
+service: technical-challenge
+
+functions: ${file(serverless-dynamic.js)}  # Invocamos el script dinámico
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    TABLE_NAME: starwars
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:BatchWriteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_NAME}"
+
+plugins:
+  - serverless-offline

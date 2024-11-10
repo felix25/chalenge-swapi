@@ -1,0 +1,23 @@
+getStarWars:
+  handler: handler.main
+  description: |
+    Gets data from DynamoDB
+  timeout: 10
+  memorySize: 192
+  events:
+    - http:
+        path: /list/all
+        method: GET
+        integration: lambda
+        response:
+          headers:
+            Content-Type: "'application/json'"
+          statusCodes:
+            200:
+              pattern: ''
+              template: $input.json('$')
+            500:
+              pattern: '.*"httpStatus":500.*'
+              template: $input.json('$')
+              headers:
+                Content-Type: "'application/json'"
